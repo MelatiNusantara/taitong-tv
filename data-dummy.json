@@ -1,0 +1,110 @@
+{
+  "settings": {
+    "title": "TAITONG MONEY CHANGER",
+    "refresh_sec": 5,
+    "ticker_speed": 60,
+    "theme": "taitong-yellow",
+    "branch": "TAITONG",
+    "address": "Jl. (isi alamat cabang)",
+    "phone": "(isi nomor)"
+  },
+  "rates": [
+    {
+      "code": "USD",
+      "buy": 15620,
+      "sell": 15780,
+      "unit": "1",
+      "order": 1
+    },
+    {
+      "code": "SGD",
+      "buy": 11550,
+      "sell": 11720,
+      "unit": "1",
+      "order": 2
+    },
+    {
+      "code": "EUR",
+      "buy": 16980,
+      "sell": 17240,
+      "unit": "1",
+      "order": 3
+    },
+    {
+      "code": "AUD",
+      "buy": 10150,
+      "sell": 10340,
+      "unit": "1",
+      "order": 4
+    },
+    {
+      "code": "JPY",
+      "buy": 105,
+      "sell": 112,
+      "unit": "100",
+      "order": 5
+    },
+    {
+      "code": "CNH",
+      "buy": 2140,
+      "sell": 2275,
+      "unit": "1",
+      "order": 6
+    },
+    {
+      "code": "THB",
+      "buy": 430,
+      "sell": 465,
+      "unit": "1",
+      "order": 7
+    },
+    {
+      "code": "KRW",
+      "buy": 11.2,
+      "sell": 12.4,
+      "unit": "100",
+      "order": 8
+    },
+    {
+      "code": "GBP",
+      "buy": 19850,
+      "sell": 20280,
+      "unit": "1",
+      "order": 9
+    },
+    {
+      "code": "CAD",
+      "buy": 11400,
+      "sell": 11680,
+      "unit": "1",
+      "order": 10
+    }
+  ],
+  "ads": [
+    {
+      "type": "text",
+      "content": "PROMO \u2022 Kurs bersaing \u2022 Transaksi cepat \u2022 Aman & terpercaya \u2022",
+      "duration_sec": 8,
+      "order": 1
+    },
+    {
+      "type": "image",
+      "content": "https://images.unsplash.com/photo-1565372195458-9de0b320ef04?auto=format&fit=crop&w=1400&q=70",
+      "duration_sec": 10,
+      "order": 2
+    },
+    {
+      "type": "text",
+      "content": "INFO \u2022 Buka setiap hari 09:00\u201321:00 \u2022 Hubungi WhatsApp untuk reservasi \u2022",
+      "duration_sec": 8,
+      "order": 3
+    },
+    {
+      "type": "image",
+      "content": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1400&q=70",
+      "duration_sec": 10,
+      "order": 4
+    }
+  ],
+  "generated_at": "2026-02-17T16:40:37.238409Z"
+}
