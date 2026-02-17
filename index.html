@@ -648,11 +648,32 @@
     state.tickerAnim = requestAnimationFrame(loop);
   }
 
-  async function fetchJSON(){
-    const target = API_URL ? (API_URL + (API_URL.includes("?") ? "&" : "?") + "t=" + Date.now()) : (FALLBACK_LOCAL_JSON + "?t=" + Date.now());
-    const res = await fetch(target, { cache:"no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return await res.json();
+  function fetchJSON() {
+    return new Promise((resolve, reject) => {
+      const cb = "__cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+      const script = document.createElement("script");
+
+      window[cb] = (data) => {
+        try { resolve(data); }
+        finally {
+          delete window[cb];
+          script.remove();
+        }
+      };
+
+      script.onerror = () => {
+        delete window[cb];
+        script.remove();
+        reject(new Error("JSONP load failed"));
+      };
+
+      const target = API_URL
+        ? (API_URL + (API_URL.includes("?") ? "&" : "?") + "callback=" + cb + "&t=" + Date.now())
+        : (FALLBACK_LOCAL_JSON + "?t=" + Date.now());
+
+      script.src = target;
+      document.body.appendChild(script);
+    });
   }
 
   function scheduleRefresh(sec){
