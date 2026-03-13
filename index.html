@@ -22,9 +22,11 @@
       --line2:rgba(255,255,255,.07);
       --muted:rgba(255,255,255,.84);
       --muted2:rgba(255,255,255,.62);
+      --muted3:rgba(255,255,255,.38);
       --accent:#ffd200;
       --accent2:#ffea6a;
       --good:#63ff90;
+      --warn:#ffcf4d;
       --bad:#ff6b6b;
       --shadow:0 16px 40px rgba(0,0,0,.38);
       --radius:24px;
@@ -53,10 +55,6 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
     }
 
-    /* =========================================================
-       App tetap diputar 90deg CLOCKWISE
-       supaya pas untuk TV portrait yang dipasang vertikal
-       ========================================================= */
     .screen{
       position:fixed;
       inset:0;
@@ -106,7 +104,6 @@
       opacity:.95;
     }
 
-    /* HEADER */
     .brandCard{
       display:flex;
       align-items:flex-start;
@@ -172,7 +169,6 @@
       word-break:break-word;
     }
 
-    /* STATUS */
     .topInfo{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -203,6 +199,12 @@
       background:var(--good);
       box-shadow:0 0 0 6px rgba(99,255,144,.12);
       flex:0 0 auto;
+      transition:all .25s ease;
+    }
+
+    .dot.warn{
+      background:var(--warn);
+      box-shadow:0 0 0 6px rgba(255,207,77,.12);
     }
 
     .dot.offline{
@@ -227,6 +229,14 @@
       flex:0 1 auto;
     }
 
+    .updatedWrap{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
     .updatedTag{
       color:#111;
       background:linear-gradient(180deg, var(--accent), var(--accent2));
@@ -239,7 +249,31 @@
       flex:0 0 auto;
     }
 
-    /* MAIN: sekarang vertikal */
+    .healthMark{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:transparent;
+      opacity:.75;
+      flex:0 0 auto;
+      transition:all .25s ease;
+    }
+
+    .healthMark.live{
+      background:var(--good);
+      box-shadow:0 0 0 4px rgba(99,255,144,.10);
+    }
+
+    .healthMark.cache{
+      background:var(--warn);
+      box-shadow:0 0 0 4px rgba(255,207,77,.10);
+    }
+
+    .healthMark.offline{
+      background:rgba(255,255,255,.18);
+      box-shadow:none;
+    }
+
     .main{
       min-height:0;
       display:grid;
@@ -281,7 +315,6 @@
       max-width:42%;
     }
 
-    /* RATES */
     .ratesWrap{
       position:relative;
       z-index:1;
@@ -357,13 +390,15 @@
       flex:0 0 auto;
     }
 
-    .emptyRates{
-      padding:22px 12px;
-      font-size:20px;
-      color:rgba(255,255,255,.72);
+    .placeholderRow{
+      opacity:.42;
     }
 
-    /* PROMO */
+    .placeholderRow .badge,
+    .placeholderRow .num{
+      color:rgba(255,255,255,.52);
+    }
+
     .promoWrap{
       position:relative;
       z-index:1;
@@ -427,7 +462,7 @@
       background:rgba(255,255,255,.04);
       border:1px solid rgba(255,255,255,.08);
       font-size:clamp(13px, 1.2vw, 16px);
-      color:var(--muted);
+      color:var(--muted3);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
@@ -444,7 +479,6 @@
       white-space:nowrap;
     }
 
-    /* TICKER */
     .tickerCard{
       min-height:54px;
       display:flex;
@@ -476,7 +510,6 @@
       opacity:.5;
     }
 
-    /* CLOCK */
     .clockCard{
       min-height:78px;
       padding:12px 16px;
@@ -579,7 +612,6 @@
   <div class="screen">
     <div class="rotatedApp">
       <div class="app">
-        <!-- HEADER -->
         <div class="card brandCard">
           <div class="logoMark" aria-hidden="true"></div>
           <div class="brandText">
@@ -588,27 +620,27 @@
           </div>
         </div>
 
-        <!-- STATUS -->
         <div class="topInfo">
           <div class="card pillCard">
             <div class="pillLeft">
               <div class="dot" id="dot"></div>
               <div class="pillLabel">Status</div>
             </div>
-            <div class="pillValue" id="statusText">Online</div>
+            <div class="pillValue" id="statusText">Loading...</div>
           </div>
 
           <div class="card pillCard">
             <div class="pillLeft">
               <div class="updatedTag">UPDATED</div>
             </div>
-            <div class="pillValue" id="updatedAt">-</div>
+            <div class="updatedWrap">
+              <div class="pillValue" id="updatedAt">-</div>
+              <div class="healthMark offline" id="healthMark" aria-hidden="true"></div>
+            </div>
           </div>
         </div>
 
-        <!-- MAIN -->
         <div class="main">
-          <!-- RATES -->
           <section class="card panel" aria-label="Rates">
             <div class="sectionHead">
               <h2>Exchange Rates</h2>
@@ -629,7 +661,6 @@
             </div>
           </section>
 
-          <!-- PROMO -->
           <section class="card panel" aria-label="Promo">
             <div class="sectionHead">
               <h2>Promo &amp; Info</h2>
@@ -639,25 +670,23 @@
             <div class="promoWrap">
               <div class="adStage" id="adStage">
                 <div class="adText">
-                  Loading...
-                  <small>Mengambil data promo</small>
+                  INFO
+                  <small>Promo & informasi</small>
                 </div>
               </div>
 
               <div class="adMeta">
-                <div class="adHint" id="adHint">-</div>
+                <div class="adHint" id="adHint">Sinkronisasi...</div>
                 <div class="adChip" id="adChip">-</div>
               </div>
             </div>
           </section>
         </div>
 
-        <!-- TICKER -->
         <div class="tickerCard card" style="border-radius:999px;">
           <div class="ticker" id="ticker">-</div>
         </div>
 
-        <!-- CLOCK -->
         <div class="card clockCard">
           <div class="clockLeft">
             <div class="clockLabel">Waktu Lokal</div>
@@ -673,9 +702,10 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxkuzTHTMtqm26sYesHduzY-YhaE6g8VbhKLBuELHtykLuyP2E15Z1X5gknexortpKR/exec";
     const FALLBACK_LOCAL_JSON = "data-dummy.json";
 
+    const BUILD_VERSION = "tv-20260313-03";
     const DATA_REFRESH_SEC = 10;
-    const PAGE_RELOAD_SEC = 45;
-    const CACHE_KEY = "taitong-signage-cache-v4";
+    const PAGE_RELOAD_SEC = 30;
+    const CACHE_KEY = "taitong-signage-cache-" + BUILD_VERSION;
 
     const state = {
       ads: [],
@@ -684,7 +714,8 @@
       dataRefreshHandle: null,
       pageReloadHandle: null,
       tickerAnim: null,
-      lastTickerText: ""
+      lastTickerText: "",
+      hasLiveData: false
     };
 
     const el = (id) => document.getElementById(id);
@@ -699,9 +730,28 @@
       }[m]));
     }
 
-    function setOnline(isOnline, msg){
-      el("dot").classList.toggle("offline", !isOnline);
-      el("statusText").textContent = msg || (isOnline ? "Online" : "Offline");
+    function setVisualMode(mode){
+      const dot = el("dot");
+      const health = el("healthMark");
+      dot.classList.remove("warn", "offline");
+      health.classList.remove("live", "cache", "offline");
+
+      if (mode === "live"){
+        dot.classList.add();
+        health.classList.add("live");
+        el("statusText").textContent = "Online";
+        el("adHint").textContent = "Sinkron";
+      } else if (mode === "cache"){
+        dot.classList.add("warn");
+        health.classList.add("cache");
+        el("statusText").textContent = "Standby";
+        el("adHint").textContent = "Sinkron";
+      } else {
+        dot.classList.add("offline");
+        health.classList.add("offline");
+        el("statusText").textContent = "Standby";
+        el("adHint").textContent = "Sinkron";
+      }
     }
 
     function formatID(n){
@@ -711,10 +761,48 @@
       return num.toLocaleString("id-ID", { maximumFractionDigits: 2 });
     }
 
+    function clearOldLocalStorageCaches(){
+      try{
+        const keysToDelete = [];
+        for (let i = 0; i < localStorage.length; i++){
+          const key = localStorage.key(i);
+          if (key && key.startsWith("taitong-signage-cache-") && key !== CACHE_KEY){
+            keysToDelete.push(key);
+          }
+        }
+        keysToDelete.forEach((key) => localStorage.removeItem(key));
+      }catch(err){
+        console.warn("clearOldLocalStorageCaches failed", err);
+      }
+    }
+
+    async function clearBrowserCaches(){
+      try{
+        if ("caches" in window){
+          const names = await caches.keys();
+          await Promise.all(names.map((name) => caches.delete(name)));
+        }
+      }catch(err){
+        console.warn("clearBrowserCaches failed", err);
+      }
+    }
+
+    async function unregisterServiceWorkers(){
+      try{
+        if ("serviceWorker" in navigator){
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((reg) => reg.unregister()));
+        }
+      }catch(err){
+        console.warn("unregisterServiceWorkers failed", err);
+      }
+    }
+
     function saveCache(data){
       try{
         localStorage.setItem(CACHE_KEY, JSON.stringify({
           saved_at: Date.now(),
+          build_version: BUILD_VERSION,
           data
         }));
       }catch(err){
@@ -744,19 +832,37 @@
       })).filter(r => r.code);
     }
 
+    function renderPlaceholderRates(){
+      const placeholders = [
+        { code: "SGD", buy: "—", sell: "—", unit: "1" },
+        { code: "EUR", buy: "—", sell: "—", unit: "1" },
+        { code: "AUD", buy: "—", sell: "—", unit: "1" },
+        { code: "JPY", buy: "—", sell: "—", unit: "100" },
+        { code: "CNY", buy: "—", sell: "—", unit: "1" },
+        { code: "THB", buy: "—", sell: "—", unit: "1" }
+      ];
+
+      el("ratesBody").innerHTML = placeholders.map(r => `
+        <tr class="placeholderRow">
+          <td>
+            <div class="ccy">
+              <div class="badge">${escapeHtml(r.code)}</div>
+              <div class="unit">/ ${escapeHtml(r.unit)}</div>
+            </div>
+          </td>
+          <td class="num">${r.buy}</td>
+          <td class="num">${r.sell}</td>
+        </tr>
+      `).join("");
+    }
+
     function renderRates(rates){
       const rows = normalizeRates(rates)
         .sort((a,b)=>a.order - b.order)
         .slice(0, 6);
 
       if (!rows.length){
-        el("ratesBody").innerHTML = `
-          <tr>
-            <td colspan="3" class="emptyRates">
-              Data kurs belum tersedia
-            </td>
-          </tr>
-        `;
+        renderPlaceholderRates();
         return;
       }
 
@@ -805,36 +911,34 @@
       })).filter(a => a.content);
     }
 
+    function renderAdFallback(){
+      el("adStage").innerHTML = `
+        <div class="adText">
+          INFO
+          <small>Promo & informasi</small>
+        </div>
+      `;
+      el("adChip").textContent = "•";
+    }
+
     function renderAd(item){
       const stage = el("adStage");
 
       if (!item){
-        stage.innerHTML = `
-          <div class="adText">
-            INFO
-            <small>Isi sheet Ads untuk menampilkan promo / informasi</small>
-          </div>
-        `;
-        el("adHint").textContent = "Belum ada data promo";
-        el("adChip").textContent = "—";
+        renderAdFallback();
         return;
       }
 
       if (item.type === "image"){
         stage.innerHTML = "";
         const img = document.createElement("img");
-        img.src = item.content + (item.content.includes("?") ? "&" : "?") + "t=" + Date.now();
+        img.src = item.content + (item.content.includes("?") ? "&" : "?") + "t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION);
         img.alt = "Promo";
+        img.referrerPolicy = "no-referrer";
         img.onerror = () => {
-          stage.innerHTML = `
-            <div class="adText">
-              Cek Gambar
-              <small>Cek URL gambar</small>
-            </div>
-          `;
+          renderAdFallback();
         };
         stage.appendChild(img);
-        el("adHint").textContent = "Promo image";
       } else {
         stage.innerHTML = `
           <div class="adText">
@@ -842,7 +946,6 @@
             <small>Promo TAITONG • Hubungi staff untuk info lebih lanjut</small>
           </div>
         `;
-        el("adHint").textContent = "Promo text";
       }
 
       el("adChip").textContent = `${item.duration_sec}s`;
@@ -852,7 +955,7 @@
       if (state.adTimer) clearTimeout(state.adTimer);
 
       if (!state.ads.length){
-        renderAd(null);
+        renderAdFallback();
         return;
       }
 
@@ -878,9 +981,11 @@
         .sort((a,b)=>a.order - b.order)
         .slice(0, 6);
 
-      rates.forEach(r => {
-        parts.push(`${escapeHtml(r.code)}: ${formatID(r.buy)} / ${formatID(r.sell)}`);
-      });
+      if (rates.length){
+        rates.forEach(r => {
+          parts.push(`${escapeHtml(r.code)}: ${formatID(r.buy)} / ${formatID(r.sell)}`);
+        });
+      }
 
       parts.push(`Terima kasih telah bertransaksi di TAITONG`);
 
@@ -915,6 +1020,23 @@
       state.tickerAnim = requestAnimationFrame(loop);
     }
 
+    function parsePossiblyWrappedJSON(text){
+      const trimmed = String(text || "").trim();
+
+      if (!trimmed) throw new Error("Empty response");
+
+      try{
+        return JSON.parse(trimmed);
+      }catch(e){}
+
+      const jsonpMatch = trimmed.match(/^[^(]+\(([\s\S]*)\)\s*;?\s*$/);
+      if (jsonpMatch && jsonpMatch[1]){
+        return JSON.parse(jsonpMatch[1]);
+      }
+
+      throw new Error("Response is not valid JSON/JSONP");
+    }
+
     function fetchJSONP(url){
       return new Promise((resolve, reject) => {
         const cb = "__cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
@@ -940,20 +1062,43 @@
           reject(new Error("JSONP load failed"));
         };
 
-        script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb + "&t=" + Date.now();
+        const sep = url.includes("?") ? "&" : "?";
+        script.src = url + sep + "callback=" + cb + "&t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION);
         document.body.appendChild(script);
       });
     }
 
+    async function fetchDirectJSON(url){
+      const sep = url.includes("?") ? "&" : "?";
+      const res = await fetch(
+        url + sep + "t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION),
+        {
+          method: "GET",
+          cache: "no-store",
+          redirect: "follow"
+        }
+      );
+      if (!res.ok) throw new Error("Direct fetch failed");
+      const text = await res.text();
+      return parsePossiblyWrappedJSON(text);
+    }
+
     async function fetchLocalJSON(url){
-      const res = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
+      const res = await fetch(
+        url + "?t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION),
+        { cache: "no-store" }
+      );
       if (!res.ok) throw new Error("Local JSON fetch failed");
       return await res.json();
     }
 
     async function fetchData(){
       if (API_URL && API_URL.trim()){
-        return await fetchJSONP(API_URL.trim());
+        try{
+          return await fetchJSONP(API_URL.trim());
+        }catch(errJsonp){
+          return await fetchDirectJSON(API_URL.trim());
+        }
       }
       return await fetchLocalJSON(FALLBACK_LOCAL_JSON);
     }
@@ -969,10 +1114,29 @@
       startTicker(buildTickerText(data));
 
       if (source === "live"){
+        state.hasLiveData = true;
         saveCache(data);
-        setOnline(true, "Online");
+        setVisualMode("live");
       } else {
-        setOnline(false, "Offline / Cache");
+        setVisualMode("cache");
+      }
+    }
+
+    function applyQuietFallback(){
+      renderPlaceholderRates();
+      renderAdFallback();
+      startTicker([
+        "<span><b>TAITONG</b></span>",
+        "<span class='sep'>•</span>",
+        "<span>Kurs update otomatis dari spreadsheet</span>",
+        "<span class='sep'>•</span>",
+        "<span>Pastikan nominal & mata uang sebelum transaksi</span>",
+        "<span class='sep'>•</span>",
+        "<span>Terima kasih telah bertransaksi di TAITONG</span>"
+      ].join(""));
+      setVisualMode("offline");
+      if (!el("updatedAt").textContent || el("updatedAt").textContent === "-"){
+        el("updatedAt").textContent = "—";
       }
     }
 
@@ -987,12 +1151,18 @@
       if (state.pageReloadHandle) clearTimeout(state.pageReloadHandle);
       state.pageReloadHandle = setTimeout(() => {
         hardReloadPage();
-      }, Math.max(20, sec) * 1000);
+      }, Math.max(15, sec) * 1000);
     }
 
     function hardReloadPage(){
+      try{
+        localStorage.setItem("taitong-last-reload", String(Date.now()));
+      }catch(e){}
+
       const url = new URL(window.location.href);
       url.searchParams.set("_page", Date.now().toString());
+      url.searchParams.set("_v", BUILD_VERSION);
+      url.searchParams.set("_r", Math.random().toString(36).slice(2));
       window.location.replace(url.toString());
     }
 
@@ -1010,7 +1180,7 @@
         if (cached){
           applyData(cached, "cache");
         }else{
-          setOnline(false, "Offline");
+          applyQuietFallback();
         }
 
         scheduleDataRefresh(DATA_REFRESH_SEC);
@@ -1030,17 +1200,31 @@
       });
     }
 
-    function init(){
+    async function init(){
       tickClock();
       setInterval(tickClock, 1000);
+
+      clearOldLocalStorageCaches();
+      await unregisterServiceWorkers();
+      await clearBrowserCaches();
 
       const cached = readCache();
       if (cached){
         applyData(cached, "cache");
+      }else{
+        applyQuietFallback();
       }
 
-      loadData();
+      await loadData();
       schedulePageReload(PAGE_RELOAD_SEC);
+
+      window.addEventListener("pageshow", () => {
+        setTimeout(() => loadData().catch(console.error), 300);
+      });
+
+      window.addEventListener("focus", () => {
+        setTimeout(() => loadData().catch(console.error), 300);
+      });
     }
 
     init();
