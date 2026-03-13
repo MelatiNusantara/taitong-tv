@@ -171,7 +171,7 @@
 
     .topInfo{
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns:1fr 108px;
       gap:12px;
     }
 
@@ -272,6 +272,46 @@
     .healthMark.offline{
       background:rgba(255,255,255,.18);
       box-shadow:none;
+    }
+
+    .qrCard{
+      min-height:78px;
+      padding:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .qrBox{
+      position:relative;
+      z-index:1;
+      width:100%;
+      height:100%;
+      min-height:62px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .qrBox img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+      background:#fff;
+    }
+
+    .qrFallback{
+      color:#101a31;
+      font-size:12px;
+      line-height:1.15;
+      font-weight:900;
+      text-align:center;
+      letter-spacing:.04em;
     }
 
     .main{
@@ -510,12 +550,12 @@
       opacity:.5;
     }
 
-    .clockCard{
+    .footerCard{
       min-height:78px;
       padding:12px 16px;
       display:grid;
-      grid-template-columns:1fr auto;
-      gap:12px;
+      grid-template-columns:1fr 1.15fr auto;
+      gap:14px;
       align-items:center;
     }
 
@@ -532,6 +572,30 @@
     .clockDay{
       font-size:clamp(18px, 1.55vw, 22px);
       font-weight:700;
+      color:#fff;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .footerUpdated{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:6px;
+    }
+
+    .footerUpdatedTop{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+
+    .footerUpdatedValue{
+      font-size:clamp(14px, 1.2vw, 17px);
+      font-weight:800;
       color:#fff;
       white-space:nowrap;
       overflow:hidden;
@@ -565,11 +629,21 @@
 
       .topInfo{
         gap:10px;
+        grid-template-columns:1fr 100px;
       }
 
       .pillCard{
         min-height:72px;
         padding:12px 14px;
+      }
+
+      .qrCard{
+        min-height:72px;
+        padding:7px;
+      }
+
+      .qrBox{
+        min-height:58px;
       }
 
       .main{
@@ -601,7 +675,7 @@
         min-height:50px;
       }
 
-      .clockCard{
+      .footerCard{
         min-height:70px;
         padding:10px 14px;
       }
@@ -629,13 +703,9 @@
             <div class="pillValue" id="statusText">Loading...</div>
           </div>
 
-          <div class="card pillCard">
-            <div class="pillLeft">
-              <div class="updatedTag">UPDATED</div>
-            </div>
-            <div class="updatedWrap">
-              <div class="pillValue" id="updatedAt">-</div>
-              <div class="healthMark offline" id="healthMark" aria-hidden="true"></div>
+          <div class="card qrCard" aria-label="WhatsApp QR">
+            <div class="qrBox" id="qrBox">
+              <img id="qrImg" alt="WhatsApp QR" />
             </div>
           </div>
         </div>
@@ -687,11 +757,20 @@
           <div class="ticker" id="ticker">-</div>
         </div>
 
-        <div class="card clockCard">
+        <div class="card footerCard">
           <div class="clockLeft">
             <div class="clockLabel">Waktu Lokal</div>
             <div class="clockDay" id="day">-</div>
           </div>
+
+          <div class="footerUpdated">
+            <div class="footerUpdatedTop">
+              <div class="updatedTag">UPDATED</div>
+              <div class="healthMark offline" id="healthMark" aria-hidden="true"></div>
+            </div>
+            <div class="footerUpdatedValue" id="updatedAt">-</div>
+          </div>
+
           <div class="clockValue" id="clock">-</div>
         </div>
       </div>
@@ -701,6 +780,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxkuzTHTMtqm26sYesHduzY-YhaE6g8VbhKLBuELHtykLuyP2E15Z1X5gknexortpKR/exec";
     const FALLBACK_LOCAL_JSON = "data-dummy.json";
+    const WHATSAPP_QR_URL = "./whatsapp-qr.png";
 
     const BUILD_VERSION = "tv-20260313-04";
     const DATA_REFRESH_SEC = 10;
@@ -743,7 +823,6 @@
       health.classList.remove("live", "cache", "offline");
 
       if (mode === "live"){
-        dot.classList.add();
         health.classList.add("live");
         el("statusText").textContent = "Online";
         el("adHint").textContent = "Sinkron";
@@ -802,6 +881,18 @@
       }catch(err){
         console.warn("unregisterServiceWorkers failed", err);
       }
+    }
+
+    function initQrImage(){
+      const qrBox = el("qrBox");
+      const qrImg = el("qrImg");
+      const src = WHATSAPP_QR_URL + (WHATSAPP_QR_URL.includes("?") ? "&" : "?") + "v=" + encodeURIComponent(BUILD_VERSION);
+
+      qrImg.onload = () => {};
+      qrImg.onerror = () => {
+        qrBox.innerHTML = `<div class="qrFallback">WA<br>QR</div>`;
+      };
+      qrImg.src = src;
     }
 
     function saveCache(data){
@@ -1272,6 +1363,7 @@
       clearOldLocalStorageCaches();
       await unregisterServiceWorkers();
       await clearBrowserCaches();
+      initQrImage();
 
       const cached = readCache();
       if (cached){
