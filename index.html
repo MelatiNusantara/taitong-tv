@@ -706,6 +706,8 @@
     const DATA_REFRESH_SEC = 10;
     const PAGE_RELOAD_SEC = 30;
     const CACHE_KEY = "taitong-signage-cache-" + BUILD_VERSION;
+    const RATES_PAGE_SIZE = 6;
+    const RATES_ROTATE_SEC = 8;
 
     const state = {
       ads: [],
@@ -715,7 +717,11 @@
       pageReloadHandle: null,
       tickerAnim: null,
       lastTickerText: "",
-      hasLiveData: false
+      hasLiveData: false,
+      allRates: [],
+      ratesPageIndex: 0,
+      ratesPageTimer: null,
+      ratesSignature: ""
     };
 
     const el = (id) => document.getElementById(id);
@@ -832,6 +838,20 @@
       })).filter(r => r.code);
     }
 
+    function getRatesSignature(rates){
+      return JSON.stringify(
+        normalizeRates(rates)
+          .sort((a,b) => a.order - b.order)
+          .map(r => ({
+            code: r.code,
+            buy: r.buy,
+            sell: r.sell,
+            unit: r.unit,
+            order: r.order
+          }))
+      );
+    }
+
     function renderPlaceholderRates(){
       const placeholders = [
         { code: "SGD", buy: "—", sell: "—", unit: "1" },
@@ -857,9 +877,15 @@
     }
 
     function renderRates(rates){
-      const rows = normalizeRates(rates)
-        .sort((a,b)=>a.order - b.order)
-        .slice(0, 6);
+      const rows = (rates || []).map(r => ({
+        code: String(r.code || "").trim(),
+        buy: r.buy,
+        sell: r.sell,
+        unit: String(r.unit || "1"),
+        order: Number(r.order || 999)
+      }))
+      .filter(r => r.code)
+      .sort((a,b) => a.order - b.order);
 
       if (!rows.length){
         renderPlaceholderRates();
@@ -878,6 +904,39 @@
           <td class="num">${formatID(r.sell)}</td>
         </tr>
       `).join("");
+    }
+
+    function startRatesRotation(rates){
+      if (state.ratesPageTimer) {
+        clearTimeout(state.ratesPageTimer);
+        state.ratesPageTimer = null;
+      }
+
+      const sortedRates = normalizeRates(rates)
+        .sort((a,b) => a.order - b.order);
+
+      state.allRates = sortedRates;
+      state.ratesPageIndex = 0;
+
+      if (!sortedRates.length){
+        renderPlaceholderRates();
+        return;
+      }
+
+      const totalPages = Math.ceil(sortedRates.length / RATES_PAGE_SIZE);
+
+      const showPage = () => {
+        const start = state.ratesPageIndex * RATES_PAGE_SIZE;
+        const end = start + RATES_PAGE_SIZE;
+        const pageRows = sortedRates.slice(start, end);
+
+        renderRates(pageRows);
+
+        state.ratesPageIndex = (state.ratesPageIndex + 1) % totalPages;
+        state.ratesPageTimer = setTimeout(showPage, RATES_ROTATE_SEC * 1000);
+      };
+
+      showPage();
     }
 
     function setHeader(data){
@@ -1107,7 +1166,13 @@
       if (!data || typeof data !== "object") return;
 
       setHeader(data);
-      renderRates(data.rates || []);
+
+      const newRatesSignature = getRatesSignature(data.rates || []);
+      if (newRatesSignature !== state.ratesSignature) {
+        state.ratesSignature = newRatesSignature;
+        startRatesRotation(data.rates || []);
+      }
+
       state.ads = normalizeAds(data.ads || []).sort((a,b)=>a.order - b.order);
       state.adIndex = 0;
       startAdsRotation();
