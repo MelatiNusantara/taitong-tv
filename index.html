@@ -15,7 +15,6 @@
     :root{
       --bg0:#05070c;
       --bg1:#0b1020;
-      --bg2:#101a31;
       --line:rgba(255,255,255,.10);
       --line2:rgba(255,255,255,.07);
       --muted:rgba(255,255,255,.84);
@@ -106,23 +105,23 @@
 
     .brandCard{
       display:grid;
-      grid-template-columns:auto minmax(0, 1fr) 92px;
+      grid-template-columns:56px minmax(0, 1fr) 108px;
       align-items:center;
-      gap:14px;
-      padding:13px 15px;
-      min-height:96px;
+      gap:12px;
+      padding:12px 15px;
+      min-height:94px;
     }
 
     .logoMark{
-      width:58px;
-      height:58px;
+      width:56px;
+      height:56px;
       border-radius:18px;
-      flex:0 0 auto;
       background:
         radial-gradient(circle at 30% 30%, rgba(255,255,255,.26), transparent 50%),
         linear-gradient(180deg, rgba(255,210,0,1), rgba(255,210,0,.60));
       box-shadow:0 8px 24px rgba(255,210,0,.22);
       position:relative;
+      z-index:1;
     }
 
     .logoMark::after{
@@ -138,42 +137,42 @@
       display:flex;
       flex-direction:column;
       justify-content:center;
-      gap:5px;
+      gap:4px;
+      position:relative;
+      z-index:1;
     }
 
     .title{
-      font-size:clamp(24px, 3.1vw, 40px);
+      font-size:clamp(18px, 2.2vw, 28px);
       font-weight:900;
-      letter-spacing:.03em;
-      line-height:1.04;
+      letter-spacing:.015em;
+      line-height:1.02;
       text-transform:uppercase;
       text-shadow:0 6px 18px rgba(0,0,0,.42);
-      white-space:normal;
+      white-space:nowrap;
       overflow:hidden;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      word-break:break-word;
+      text-overflow:ellipsis;
+      display:block;
     }
 
     .subtitle{
-      font-size:clamp(13px, 1.4vw, 18px);
-      line-height:1.22;
+      font-size:clamp(11px, 1.02vw, 14px);
+      line-height:1.18;
       color:var(--muted2);
-      white-space:normal;
+      white-space:nowrap;
       overflow:hidden;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      word-break:break-word;
+      text-overflow:ellipsis;
+      display:block;
     }
 
     .brandQr{
-      min-height:72px;
-      padding:6px;
-      display:flex;
+      min-height:70px;
+      padding:6px 6px 7px;
+      display:grid;
+      grid-template-rows:minmax(0, 1fr) auto;
+      gap:4px;
       align-items:center;
-      justify-content:center;
+      justify-items:center;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.08);
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -184,7 +183,7 @@
     .qrBox{
       width:100%;
       height:100%;
-      min-height:58px;
+      min-height:52px;
       border-radius:14px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.10);
@@ -211,11 +210,26 @@
       letter-spacing:.04em;
     }
 
+    .qrPhone{
+      width:100%;
+      text-align:center;
+      font-size:clamp(8px, .78vw, 10px);
+      line-height:1.05;
+      font-weight:800;
+      color:rgba(255,255,255,.88);
+      white-space:normal;
+      overflow:visible;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      letter-spacing:0;
+      padding:0 1px;
+    }
+
     .main{
       min-height:0;
       display:grid;
       grid-template-columns:1fr;
-      grid-template-rows:minmax(0, 1.12fr) minmax(0, 1fr);
+      grid-template-rows:minmax(0, 1.1fr) minmax(0, .95fr);
       gap:12px;
     }
 
@@ -399,6 +413,8 @@
       flex-direction:column;
       justify-content:center;
       gap:3px;
+      position:relative;
+      z-index:1;
     }
 
     .clockLabel{
@@ -431,6 +447,8 @@
       align-items:center;
       justify-content:center;
       min-width:18px;
+      position:relative;
+      z-index:1;
     }
 
     .healthMark{
@@ -465,6 +483,8 @@
       letter-spacing:.03em;
       text-align:right;
       white-space:nowrap;
+      position:relative;
+      z-index:1;
     }
 
     @media (max-height: 760px){
@@ -474,23 +494,35 @@
       }
 
       .brandCard{
-        min-height:92px;
-        padding:12px 14px;
-        grid-template-columns:auto minmax(0, 1fr) 84px;
+        min-height:90px;
+        padding:11px 14px;
+        grid-template-columns:52px minmax(0, 1fr) 102px;
       }
 
       .logoMark{
-        width:54px;
-        height:54px;
+        width:52px;
+        height:52px;
+      }
+
+      .title{
+        font-size:clamp(17px, 2.05vw, 24px);
+      }
+
+      .subtitle{
+        font-size:clamp(10px, .96vw, 12px);
       }
 
       .brandQr{
         min-height:66px;
-        padding:6px;
+        padding:5px 5px 6px;
       }
 
       .qrBox{
-        min-height:52px;
+        min-height:48px;
+      }
+
+      .qrPhone{
+        font-size:clamp(7px, .72vw, 9px);
       }
 
       .main{
@@ -540,6 +572,7 @@
             <div class="qrBox" id="qrBox">
               <img id="qrImg" alt="WhatsApp QR" />
             </div>
+            <div class="qrPhone" id="qrPhone">-</div>
           </div>
         </div>
 
@@ -809,13 +842,12 @@
     }
 
     function startRatesRotation(rates){
-      if (state.ratesPageTimer) {
+      if (state.ratesPageTimer){
         clearTimeout(state.ratesPageTimer);
         state.ratesPageTimer = null;
       }
 
-      const sortedRates = normalizeRates(rates)
-        .sort((a,b) => a.order - b.order);
+      const sortedRates = normalizeRates(rates).sort((a,b) => a.order - b.order);
 
       state.allRates = sortedRates;
       state.ratesPageIndex = 0;
@@ -846,10 +878,11 @@
       const title = settings.title || "TAITONG MONEY CHANGER";
       const branch = settings.branch ? String(settings.branch) : "TAITONG";
       const address = settings.address ? ` • ${String(settings.address)}` : "";
-      const phone = settings.phone ? ` • ${String(settings.phone)}` : "";
+      const phoneRaw = settings.phone ? String(settings.phone).trim() : "";
 
       el("title").textContent = title;
-      el("subtitle").textContent = `Exchange Rate • ${branch}${address}${phone}`;
+      el("subtitle").textContent = `Exchange Rate • ${branch}${address}`;
+      el("qrPhone").textContent = phoneRaw || "WhatsApp";
 
       const when = data?.generated_at ? new Date(data.generated_at) : new Date();
       el("updatedAt").textContent = `Update: ${when.toLocaleString("id-ID", {
@@ -977,14 +1010,11 @@
 
     async function fetchDirectJSON(url){
       const sep = url.includes("?") ? "&" : "?";
-      const res = await fetch(
-        url + sep + "t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION),
-        {
-          method: "GET",
-          cache: "no-store",
-          redirect: "follow"
-        }
-      );
+      const res = await fetch(url + sep + "t=" + Date.now() + "&v=" + encodeURIComponent(BUILD_VERSION), {
+        method: "GET",
+        cache: "no-store",
+        redirect: "follow"
+      });
       if (!res.ok) throw new Error("Direct fetch failed");
       const text = await res.text();
       return parsePossiblyWrappedJSON(text);
@@ -1016,12 +1046,12 @@
       setHeader(data);
 
       const newRatesSignature = getRatesSignature(data.rates || []);
-      if (newRatesSignature !== state.ratesSignature) {
+      if (newRatesSignature !== state.ratesSignature){
         state.ratesSignature = newRatesSignature;
         startRatesRotation(data.rates || []);
       }
 
-      state.ads = normalizeAds(data.ads || []).sort((a,b)=>a.order - b.order);
+      state.ads = normalizeAds(data.ads || []).sort((a,b) => a.order - b.order);
       state.adIndex = 0;
       startAdsRotation();
 
@@ -1038,8 +1068,13 @@
       renderPlaceholderRates();
       renderAdFallback();
       setVisualMode("offline");
+
       if (!el("updatedAt").textContent || el("updatedAt").textContent === "-"){
         el("updatedAt").textContent = "Update: —";
+      }
+
+      if (!el("qrPhone").textContent || el("qrPhone").textContent === "-"){
+        el("qrPhone").textContent = "WhatsApp";
       }
     }
 
