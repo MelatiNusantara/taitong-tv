@@ -637,7 +637,7 @@
     const WHATSAPP_QR_URL = "./whatsapp-qr.png";
 
     const BUILD_VERSION = "tv-20260313-04";
-    const DATA_REFRESH_SEC = 150;
+    const DATA_REFRESH_SEC = 180;
     const PAGE_RELOAD_SEC = 300;
     const CACHE_KEY = "taitong-signage-cache-" + BUILD_VERSION;
     const RATES_PAGE_SIZE = 6;
@@ -653,7 +653,8 @@
       allRates: [],
       ratesPageIndex: 0,
       ratesPageTimer: null,
-      ratesSignature: ""
+      ratesSignature: "",
+      adsSignature: ""
     };
 
     const el = (id) => document.getElementById(id);
@@ -905,6 +906,19 @@
       })).filter(a => a.content);
     }
 
+    function getAdsSignature(ads){
+      return JSON.stringify(
+        normalizeAds(ads)
+          .sort((a,b) => a.order - b.order)
+          .map(a => ({
+            type: a.type,
+            content: a.content,
+            duration_sec: a.duration_sec,
+            order: a.order
+          }))
+      );
+    }
+
     function renderAdFallback(){
       el("adStage").innerHTML = `
         <div class="adText">
@@ -1051,9 +1065,15 @@
         startRatesRotation(data.rates || []);
       }
 
-      state.ads = normalizeAds(data.ads || []).sort((a,b) => a.order - b.order);
-      state.adIndex = 0;
-      startAdsRotation();
+      const normalizedAds = normalizeAds(data.ads || []).sort((a,b) => a.order - b.order);
+      const newAdsSignature = getAdsSignature(normalizedAds);
+
+      if (newAdsSignature !== state.adsSignature){
+        state.adsSignature = newAdsSignature;
+        state.ads = normalizedAds;
+        state.adIndex = 0;
+        startAdsRotation();
+      }
 
       if (source === "live"){
         state.hasLiveData = true;
