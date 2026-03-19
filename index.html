@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Taitong Money Changer</title>
+  <title>TaiTong 泰东外币兑换点</title>
 
   <style>
     :root{
@@ -137,9 +137,16 @@
       display:flex;
       flex-direction:column;
       justify-content:center;
-      gap:4px;
+      gap:2px;
       position:relative;
       z-index:1;
+    }
+
+    .titleRow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
     }
 
     .title{
@@ -147,7 +154,6 @@
       font-weight:900;
       letter-spacing:.015em;
       line-height:1.02;
-      text-transform:uppercase;
       text-shadow:0 6px 18px rgba(0,0,0,.42);
       white-space:nowrap;
       overflow:hidden;
@@ -155,13 +161,27 @@
       display:block;
     }
 
+    .titleStatusWrap{
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
+      flex:0 0 auto;
+    }
+
+    .titleParen{
+      font-size:clamp(16px, 1.9vw, 24px);
+      font-weight:900;
+      line-height:1;
+      color:rgba(255,255,255,.88);
+    }
+
     .subtitle{
-      font-size:clamp(11px, 1.02vw, 14px);
+      font-size:clamp(10px, .98vw, 13px);
       line-height:1.18;
       color:var(--muted2);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      white-space:normal;
+      overflow:visible;
+      text-overflow:clip;
       display:block;
     }
 
@@ -331,14 +351,38 @@
     }
 
     .unit{
-      font-size:.54em;
-      color:var(--muted2);
+      font-size:.82em;
+      line-height:1;
+      color:#fff;
       border:1px solid rgba(255,255,255,.14);
-      padding:4px 8px;
+      padding:4px 6px;
       border-radius:999px;
       background:rgba(255,255,255,.04);
       white-space:nowrap;
       flex:0 0 auto;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:44px;
+      min-height:30px;
+    }
+
+    .flagImg{
+      width:28px;
+      height:18px;
+      object-fit:cover;
+      display:block;
+      border-radius:4px;
+      border:1px solid rgba(255,255,255,.18);
+      background:#111;
+    }
+
+    .flagFallback{
+      font-size:18px;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .placeholderRow{
@@ -402,7 +446,7 @@
       min-height:72px;
       padding:10px 15px;
       display:grid;
-      grid-template-columns:minmax(0, 1fr) auto auto;
+      grid-template-columns:minmax(0, 1fr) auto;
       gap:16px;
       align-items:center;
     }
@@ -440,15 +484,6 @@
       overflow:hidden;
       text-overflow:ellipsis;
       margin:0;
-    }
-
-    .footerStatus{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-width:18px;
-      position:relative;
-      z-index:1;
     }
 
     .healthMark{
@@ -509,7 +544,7 @@
       }
 
       .subtitle{
-        font-size:clamp(10px, .96vw, 12px);
+        font-size:clamp(9px, .9vw, 11px);
       }
 
       .brandQr{
@@ -564,8 +599,15 @@
           <div class="logoMark" aria-hidden="true"></div>
 
           <div class="brandText">
-            <div class="title" id="title">TAITONG MONEY CHANGER</div>
-            <div class="subtitle" id="subtitle">Exchange Rate • Update otomatis dari Spreadsheet</div>
+            <div class="titleRow">
+              <div class="title" id="title">TaiTong 泰东外币兑换点</div>
+              <div class="titleStatusWrap" aria-label="Status koneksi">
+                <span class="titleParen"></span>
+                <div class="healthMark offline" id="healthMark" aria-hidden="true"></div>
+                <span class="titleParen"></span>
+              </div>
+            </div>
+            <div class="subtitle" id="subtitle">Authorities Money Changer<br>PT Artha Nusantara Bersama<br>PTC LG A8-07</div>
           </div>
 
           <div class="brandQr" aria-label="WhatsApp QR">
@@ -621,10 +663,6 @@
             <div class="clockMeta" id="updatedAt">-</div>
           </div>
 
-          <div class="footerStatus">
-            <div class="healthMark offline" id="healthMark" aria-hidden="true"></div>
-          </div>
-
           <div class="clockValue" id="clock">-</div>
         </div>
       </div>
@@ -635,6 +673,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxkuzTHTMtqm26sYesHduzY-YhaE6g8VbhKLBuELHtykLuyP2E15Z1X5gknexortpKR/exec";
     const FALLBACK_LOCAL_JSON = "data-dummy.json";
     const WHATSAPP_QR_URL = "./whatsapp-qr.png";
+    const FLAG_BASE_PATH = "./flags/";
 
     const BUILD_VERSION = "tv-20260313-04";
     const DATA_REFRESH_SEC = 180;
@@ -642,6 +681,15 @@
     const CACHE_KEY = "taitong-signage-cache-" + BUILD_VERSION;
     const RATES_PAGE_SIZE = 6;
     const RATES_ROTATE_SEC = 8;
+
+    const FIXED_HEADER = {
+      title: "TaiTong 泰东外币兑换点",
+      subtitleLines: [
+        "Authorities Money Changer",
+        "PT Artha Nusantara Bersama",
+        "PTC LG A8-07"
+      ]
+    };
 
     const state = {
       ads: [],
@@ -689,6 +737,31 @@
       const num = Number(n);
       if (Number.isNaN(num)) return String(n);
       return num.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+    }
+
+    function getCurrencyFlagPath(code){
+      const safeCode = String(code || "").trim().toLowerCase();
+      if (!safeCode) return "";
+      return FLAG_BASE_PATH + safeCode + ".jpg";
+    }
+
+    function getCurrencyFlagHtml(code){
+      const path = getCurrencyFlagPath(code);
+      const safeCode = escapeHtml(String(code || "").toUpperCase());
+
+      if (!path){
+        return `<span class="flagFallback">🏳️</span>`;
+      }
+
+      return `
+        <img
+          class="flagImg"
+          src="${escapeHtml(path)}"
+          alt="${safeCode} flag"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+        />
+        <span class="flagFallback" style="display:none;">🏳️</span>
+      `;
     }
 
     function clearOldLocalStorageCaches(){
@@ -803,7 +876,7 @@
           <td>
             <div class="ccy">
               <div class="badge">${escapeHtml(r.code)}</div>
-              <div class="unit">/ ${escapeHtml(r.unit)}</div>
+              <div class="unit" aria-label="Flag ${escapeHtml(r.code)}">${getCurrencyFlagHtml(r.code)}</div>
             </div>
           </td>
           <td class="num">${r.buy}</td>
@@ -833,7 +906,7 @@
           <td>
             <div class="ccy">
               <div class="badge">${escapeHtml(r.code)}</div>
-              <div class="unit">/ ${escapeHtml(r.unit)}</div>
+              <div class="unit" aria-label="Flag ${escapeHtml(r.code)}">${getCurrencyFlagHtml(r.code)}</div>
             </div>
           </td>
           <td class="num">${formatID(r.buy)}</td>
@@ -875,14 +948,10 @@
     }
 
     function setHeader(data){
-      const settings = data?.settings || {};
-      const title = settings.title || "TAITONG MONEY CHANGER";
-      const branch = settings.branch ? String(settings.branch) : "TAITONG";
-      const address = settings.address ? ` • ${String(settings.address)}` : "";
-      const phoneRaw = settings.phone ? String(settings.phone).trim() : "";
+      const phoneRaw = data?.settings?.phone ? String(data.settings.phone).trim() : "";
 
-      el("title").textContent = title;
-      el("subtitle").textContent = `Exchange Rate • ${branch}${address}`;
+      el("title").textContent = FIXED_HEADER.title;
+      el("subtitle").innerHTML = FIXED_HEADER.subtitleLines.map(escapeHtml).join("<br>");
       el("qrPhone").textContent = phoneRaw || "WhatsApp";
 
       const when = data?.generated_at ? new Date(data.generated_at) : new Date();
